@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>比特币私钥,公钥,钱包地址间的关系 &mdash; Hyper's Blog</title>
+  <meta name="author" content="Hyper Wang">
+
+
+
+
+
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link href="/favicon.png" rel="icon">
+
+  <link href="/theme/css/main.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+
+  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic"
+        rel="stylesheet" type="text/css">
+  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic"
+        rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <header role="banner"><hgroup>
+  <h1><a href="/">Hyper's Blog</a></h1>
+</hgroup></header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+</ul>
+
+
+<ul class="main-navigation">
+      <li >
+        <a href="/category/alogrithm.html">Alogrithm</a>
+      </li>
+      <li class="active">
+        <a href="/category/bitcoin.html">Bitcoin</a>
+      </li>
+      <li >
+        <a href="/category/technology.html">Technology</a>
+      </li>
+</ul></nav>
+  <div id="main">
+    <div id="content">
+<div>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">比特币私钥,公钥,钱包地址间的关系</h1>
+    <p class="meta">
+<time datetime="2014-11-26T23:38:00+08:00" pubdate>2014-11-26</time>    </p>
+</header>
+
+  <div class="entry-content"><hr />
+<p>比特币交易涉及到很多密码学知识：公钥、私钥、哈希、对称加密、非对称加密、签名等等。那么哪些是需要用户认真保管不能对外泄露的，那些是需要用户公开的呢？先从钱包地址的生成说起。</p>
+<hr />
+<h3><strong>钱包地址生成</strong></h3>
+<p><img src="/images/bitcoin-key-relationship/01.png" width="100%"></p>
+<ol>
+<li>首先使用随机数发生器生成一个『私钥』。一般来说这是一个256bits的数，拥有了这串数字就可以对相应『钱包地址』中的比特币进行操作，所以必须被安全地保存起来。</li>
+<li>『私钥』经过SECP256K1算法处理生成了『公钥』。SECP256K1是一种椭圆曲线算法，通过一个已知『私钥』时可以算得『公钥』，而『公钥』已知时却无法反向计算出『私钥』。这是保障比特币安全的算法基础。</li>
+<li>同SHA256一样，RIPEMD160也是一种Hash算法，由『公钥』可以计算得到『公钥哈希』，而反过来是行不通的。</li>
+<li>将一个字节的地址版本连接到『公钥哈希』头部(对于比特币网络的pubkey地址，这一字节为“0”)，然后对其进行两次SHA256运算，将结果的前4字节作为『公钥哈希』的校验值，连接在其尾部。</li>
+<li>将上一步结果使用BASE58进行编码(比特币定制版本)，就得到了『钱包地址』。比如, <em>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</em></li>
+</ol>
+<hr />
+<h3><strong>私钥,公钥,钱包地址间的关系</strong></h3>
+<p>在上述的五个步骤里只有“BASE58编码”有相应的可逆算法（“BASE58解码”），其他算法都是不可逆的，所以这些数据之间的关系可以表示为：
+<img src="/images/bitcoin-key-relationship/02.png" width="100%">
+可以看到：</p>
+<ul>
+<li>通过『私钥』可以得到上述计算过程中所有的值。</li>
+<li>『公钥哈希』和『钱包地址』可以通过互逆运算进行转换，所以它们是等价的。</li>
+</ul>
+<hr />
+<h3><strong>使用『私钥』对交易进行签名</strong></h3>
+<p>比特币钱包间的转账是通过交易（Transaction）实现的。交易数据是由转出钱包『私钥』的所有者生成，也就是说有了『私钥』就可以花费该钱包的比特币余额。生成交易的过程如下：
+<img src="/images/bitcoin-key-relationship/03.png" width="100%"></p>
+<ol>
+<li>交易的原始数据包括“转账数额”和“转入钱包地址”，但是仅有这些是不够的，因为无法证明交易的生成者对“转出钱包地址”余额有动用的权利。所以需要用『私钥』对原始数据进行签名。</li>
+<li>生成“转出钱包公钥”，这一过程与生成『钱包地址』的第2步是一样的。</li>
+<li>将“转出签名”和“转出公钥”添加到原始交易数据中，生成了正式的交易数据，这样它就可以被广播到比特币网络进行转账了。</li>
+</ol>
+<hr />
+<h3><strong>使用『公钥』对签名进行验证</strong></h3>
+<p><img src="/images/bitcoin-key-relationship/04.png" width="100%">
+交易数据被广播到比特币网络后，节点会对这个交易数据进行检验，其中就包括对签名的校验。如果校验正确，那么这笔余额就成功地从“转出钱包”转移到“转入钱包”了。</p>
+<hr />
+<h3><strong>小结</strong></h3>
+<ol>
+<li>如果一个『钱包地址』从未曾发送余额到其他『钱包地址』，那么它的『公钥』是不会暴露在比特币网络上的。因为公钥生成算法（SECP256K1）的不可逆，即使『公钥』暴露，也很难对『私钥』的安全性造成影响（难易取决于『私钥』的生成算法）。</li>
+<li>『私钥』用来生成『公钥』和『钱包地址』，也用来对交易进行签名。拥有了『私钥』就是拥有了对这个钱包余额的一切操作权力。所以，保护『私钥』是所有比特币钱包应用最基本也是最重要的功能。</li>
+</ol>
+<hr />
+<h3><strong>注</strong></h3>
+<ul>
+<li>本文仅讨论标准P2PKH交易方式，P2SH不在讨论范围内。</li>
+<li>历史上发生过校验错误的交易被打入到blockchain中的事情，这种交易中的比特币永远地消失在Cyberspace中了。</li>
+</ul></div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        Hyper Wang
+    </span>
+  </span>
+<time datetime="2014-11-26T23:38:00+08:00" pubdate>2014-11-26</time>  <span class="categories">
+    <a class='category' href='/category/bitcoin.html'>Bitcoin</a>
+  </span>
+  <span class="categories">
+    <a class="category" href="/tag/bitcoin.html">Bitcoin</a>,    <a class="category" href="/tag/technology.html">Technology</a>  </span>
+</p><div class="sharing">
+</div>    </footer>
+  </article>
+
+</div>
+<aside class="sidebar">
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+      <li class="post">
+          <a href="/jump-start-nodejs.html">『Jump start Node.js』一书中的名人语录</a>
+      </li>
+      <li class="post">
+          <a href="/leetcode-unique-paths.html">LeetCode OJ: Unique Paths</a>
+      </li>
+      <li class="post">
+          <a href="/understand-bitcoin-script.html">理解比特币脚本</a>
+      </li>
+      <li class="post">
+          <a href="/bitcoin-key-relationship.html">比特币私钥,公钥,钱包地址间的关系</a>
+      </li>
+    </ul>
+  </section>
+  <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+        <li><a href="/category/alogrithm.html">Alogrithm</a></li>
+        <li><a href="/category/bitcoin.html">Bitcoin</a></li>
+        <li><a href="/category/technology.html">Technology</a></li>
+    </ul>
+  </section>
+ 
+
+  <section>
+  <h1>Tags</h1>
+    <a href="/tag/technology.html">Technology</a>,    <a href="/tag/bitcoin.html">Bitcoin</a>,    <a href="/tag/alogrithm.html">Alogrithm</a>  </section>
+
+
+    <section>
+        <h1>Social</h1>
+        <ul>
+            <li><a href="#" target="_blank">You can add links in your config file</a></li>
+            <li><a href="#" target="_blank">Another social link</a></li>
+        </ul>
+    </section>
+    <section>
+        <h1>Blogroll</h1>
+        <ul>
+            <li><a href="http://getpelican.com/" target="_blank">Pelican</a></li>
+            <li><a href="http://python.org/" target="_blank">Python.org</a></li>
+            <li><a href="http://jinja.pocoo.org/" target="_blank">Jinja2</a></li>
+            <li><a href="#" target="_blank">You can modify those links in your config file</a></li>
+        </ul>
+    </section>
+
+</aside>    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy;  2014&ndash;2015  Hyper Wang &mdash;
+  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
+</p></footer>
+  <script src="/theme/js/modernizr-2.0.js"></script>
+  <script src="/theme/js/ender.js"></script>
+  <script src="/theme/js/octopress.js" type="text/javascript"></script>
+</body>
+</html>
