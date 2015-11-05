@@ -1,144 +1,157 @@
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html lang="zh">
 <head>
-  <meta charset="utf-8">
-  <title>Tag: Bitcoin &mdash; Hyper's Blog</title>
-  <meta name="author" content="Hyper Wang">
+        <meta charset="utf-8" />
+        <title>Hyper's Blog - Bitcoin</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
 
-
-
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-    <link href="/favicon.png" rel="icon">
-
-  <link href="/theme/css/main.css" media="screen, projection"
-        rel="stylesheet" type="text/css">
-
-  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic"
-        rel="stylesheet" type="text/css">
-  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic"
-        rel="stylesheet" type="text/css">
+        <!--[if IE]>
+            <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
 </head>
 
-<body>
-  <header role="banner"><hgroup>
-  <h1><a href="/">Hyper's Blog</a></h1>
-</hgroup></header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Hyper's Blog </a></h1>
+                <nav><ul>
+                    <li><a href="/category/alogrithm.html">Alogrithm</a></li>
+                    <li><a href="/category/bitcoin.html">Bitcoin</a></li>
+                    <li><a href="/category/technology.html">Technology</a></li>
+                </ul></nav>
+        </header>
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="/understand-bitcoin-script.html">理解比特币脚本</a></h1>
+                    <p>其实我们可以这样看待比特币的交易：『交易的发起者悬赏若干比特币，在网络上贴出了一到数学题，谁解出了这道数学题，悬赏就归谁了』。 顺着这个思路，Alice对Bob的转账可以理解为『Alice把一道只有Bob才能解开的数学题发到网络上，Bob解出题并拿走了悬赏』。那么，每个交易数据中都会出现的『脚本』就是题和解，『脚本语言』就是用来描述题和解的工具。
+<img src="/images/understand-bitcoin-script/01.png" width="100%"></p>
+<hr />
+<h2>『输入脚本』和『输出脚本』</h2>
+<p>在这里我们先讨论单输入单输出的比特币交易，因为这样描述起来更方便且不影响对『脚本』的理解。
+<a href="https://blockchain.info/zh-cn/tx/9c50cee8d50e273100987bb12ec46208cb04a1d5b68c9bea84fd4a04854b5eb1">9c50cee8d50e273100987bb12ec46208cb04a1d5b68c9bea84fd4a04854b5eb1</a> 这是一个单输入单输出交易，看下我们要关注的数据：</p>
+<div class="highlight"><pre><span class="n">Hash</span><span class="o">:</span>
+<span class="mi">9</span><span class="n">c50cee8d50e273100987bb12ec46208cb04a1d5b68c9bea84fd4a04854b5eb1</span>
+
+<span class="err">输入交易</span><span class="o">:</span>
+  <span class="err">前导输入的</span><span class="n">Hash</span><span class="o">:</span>
+  <span class="mi">437</span><span class="n">b95ae15f87c7a8ab4f51db5d3c877b972ef92f26fbc6d3c4663d1bc750149</span>
+
+  <span class="err">输入脚本</span> <span class="n">scriptSig</span><span class="o">:</span>
+  <span class="mi">3045022100</span><span class="n">efe12e2584bbd346bccfe67fd50a54191e4f45f945e3853658284358d9c062ad02200121e00b6297c0874650d00b786971f5b4601e32b3f81afa9f9f8108e93c752201</span>
+  <span class="mi">038</span><span class="n">b29d4fbbd12619d45c84c83cb4330337ab1b1a3737250f29cec679d7551148a</span>
+
+<span class="err">输出交易</span><span class="o">:</span>
+  <span class="err">转账值</span><span class="o">:</span>
+  <span class="mf">0.05010000</span> <span class="n">btc</span>
+
+  <span class="err">输出脚本</span> <span class="n">scriptPubKey</span><span class="o">:</span>
+  <span class="n">OP_DUP</span> <span class="n">OP_HASH160</span> <span class="n">be10f0a78f5ac63e8746f7f2e62a5663eed05788</span> <span class="n">OP_EQUALVERIFY</span> <span class="n">OP_CHECKSIG</span>
+</pre></div>
+
+
+<p>假设Alice是转账发送者，Bob是接受者。那么『输入交易』表明了Alice要动用的比特币的来源，『输出交易』表明了Alice要转账的数额和转账对象——Bob。那么，你可能要问，数据中的『输入脚本』和『输出脚本』是不是就是题和解？对了一半！</p>
+<p>在<a href="http://www.8btc.com/bitcoin_scripts">Bitcoin Wiki</a>中提到：</p>
+<blockquote>
+<p>原先发送币的一方，控制脚本运行，以便比特币在下一个交易中使用。想花掉币的另一方必须把以前记录的运行为真的脚本，放到输入区。</p>
+</blockquote>
+<p>换句话说，在一个交易中，『输出脚本』是数学题，『输入脚本』是题解，<strong>但不是这道数学题的题解。</strong>我开始看Wiki的时候，在这里遇到了一些障碍，没法理解『输入脚本』和『输出脚本』的联系。但是在考虑交易间的关系后，就明白了。</p>
+<p>假设有这么一系列交易：
+<img src="/images/understand-bitcoin-script/02.png" width="100%"></p>
+<ol>
+<li>上图的三个交易都是单输入单输出交易</li>
+<li>每个『输入交易』『输出交易』中，都包含对应的『脚本』</li>
+<li><strong>交易a</strong>，Alice转账给Bob；<strong>交易b</strong>，Bob转账给Carol；<strong>交易c</strong>，Carol转账给Dave</li>
+<li>当前交易的『输入』都引用前一个交易的『输出』，如交易b的『输入』引用交易a的『输出』</li>
+</ol>
+<p>按照之前的说法，<strong>交易a</strong>中的『输出脚本』就是Alice为Bob出的数学题。那么，Bob想要引用<strong>交易a</strong>『输出交易』的比特币，就要解开这道数学题。题解是在<strong>交易b</strong>的『输入脚本』里给出的！Bob解开了这道题，获得了奖金，然后在<strong>交易b</strong>中为Carol出一道数学题，等待Carol来解...</p>
+<p>所以说，下图中相同颜色的『输出』和『输入』才是一对题和解：
+<img src="/images/understand-bitcoin-script/03.png" width="100%"></p>
+<hr />
+<h2>脚本语言</h2>
+<p><a href="http://www.8btc.com/bitcoin_scripts">Bitcoin Wiki</a>给出的对脚本的解释:</p>
+<blockquote>
+<p>比特币在交易中使用脚本系统，与FORTH(一种编译语言)一样，脚本是简单的、基于堆栈的、并且从左向右处理，它特意设计成非图灵完整，没有LOOP语句。</p>
+</blockquote>
+<p>要理解比特币脚本，先要了解『堆栈』，这是一个后进先出(Last In First Out )的容器，脚本系统对数据的操作都是通过它完成的。比特币脚本系统中有两个堆栈：主堆栈和副堆栈，一般来说主要使用主堆栈。举几个简单的例子，看下指令是如何对堆栈操作的（完整的指令集在<a href="http://www.8btc.com/bitcoin_scripts">Wiki</a>里可以找到）:
+* 常数入栈：把一段常数压入到堆栈中，这个常数成为了栈顶元素
+<img src="/images/understand-bitcoin-script/04.png" width="100%"></p>
+<ul>
+<li>
+<p>OP_DUP：复制栈顶元素
+<img src="/images/understand-bitcoin-script/05.png" width="100%"></p>
+</li>
+<li>
+<p>OP_EQUALVERIFY：检查栈顶两个元素是否相等
+<img src="/images/understand-bitcoin-script/06.png" width="100%"></p>
+</li>
 </ul>
+<hr />
+<h2>标准交易脚本</h2>
+<p>也就是P2PKH(Pay To Public Key Hash)，我们常用的转账方式。Alice在转账给Bob的时候，『输出交易』中给出了Bob的『钱包地址』(等价于『公钥哈希』)；当Bob想要转账给Carol的时候，他要证明自己拥有这个『钱包地址』对应的『私钥』，所以在『输入交易』中给出了自己的『公钥』以及使用『私钥』对交易的签名。看个实例：</p>
+<ul>
+<li>交易a: <a href="https://blockchain.info/zh-cn/tx/9c50cee8d50e273100987bb12ec46208cb04a1d5b68c9bea84fd4a04854b5eb1">9c50cee8d50e273100987bb12ec46208cb04a1d5b68c9bea84fd4a04854b5eb1</a></li>
+<li>交易b: <a href="https://blockchain.info/tx/62fadb313b74854a818de4b4c0dc2e2049282b28ec88091a9497321203fb016e">62fadb313b74854a818de4b4c0dc2e2049282b28ec88091a9497321203fb016e</a></li>
+</ul>
+<p>交易b中有一个『输入交易』引用了交易a的『输出交易』，它们的脚本是一对题与解：</p>
+<p><strong>题：</strong>交易a的『输出脚本』，若干个脚本指令和转账接收方的『公钥哈希』</p>
+<div class="highlight"><pre>OP_DUP OP_HASH160 be10f0a78f5ac63e8746f7f2e62a5663eed05788 OP_EQUALVERIFY OP_CHECKSIG 
+</pre></div>
 
 
-<ul class="main-navigation">
-      <li >
-        <a href="/category/alogrithm.html">Alogrithm</a>
-      </li>
-      <li >
-        <a href="/category/bitcoin.html">Bitcoin</a>
-      </li>
-      <li >
-        <a href="/category/technology.html">Technology</a>
-      </li>
-</ul></nav>
-  <div id="main">
-    <div id="content">
-<div>
-	<article role="article">
-    	<header>
-    		<h1 class="entry-title">Tag: Bitcoin</h1>
-    	</header>
-
-    	<div id="blog-archives">
-            <h2>2015</h2>
-                    <article>
-                        <h1><a href="/understand-bitcoin-script.html">理解比特币脚本</a></h1>
-                        <time datetime="2015-01-22 22:22:00+08:00" pubdate>
-                            <span class="month">一月</span>
-                            <span class="day">22</span>
-                            <span class="year">2015</span>
-                        </time>
-                        <footer>
-                            <span class="categories">posted in
-                                <a class='category' href='/category/bitcoin.html'>Bitcoin</a>
-                            </span>
-                        </footer>
-                    </article>
-            <h2>2014</h2>
-                    <article>
-                        <h1><a href="/bitcoin-key-relationship.html">比特币私钥,公钥,钱包地址间的关系</a></h1>
-                        <time datetime="2014-11-26 23:38:00+08:00" pubdate>
-                            <span class="month">十一月</span>
-                            <span class="day">26</span>
-                            <span class="year">2014</span>
-                        </time>
-                        <footer>
-                            <span class="categories">posted in
-                                <a class='category' href='/category/bitcoin.html'>Bitcoin</a>
-                            </span>
-                        </footer>
-                    </article>
-	    </div>
-    </article>
-</div>
-<aside class="sidebar">
-  <section>
-    <h1>Recent Posts</h1>
-    <ul id="recent_posts">
-      <li class="post">
-          <a href="/understand-bitcoin-script.html">理解比特币脚本</a>
-      </li>
-      <li class="post">
-          <a href="/bitcoin-key-relationship.html">比特币私钥,公钥,钱包地址间的关系</a>
-      </li>
-    </ul>
-  </section>
-  <section>
-      
-    <h1>Categories</h1>
-    <ul id="recent_posts">
-        <li><a href="/category/alogrithm.html">Alogrithm</a></li>
-        <li><a href="/category/bitcoin.html">Bitcoin</a></li>
-        <li><a href="/category/technology.html">Technology</a></li>
-    </ul>
-  </section>
- 
-
-  <section>
-  <h1>Tags</h1>
-    <a href="/tag/technology.html">Technology</a>,    <a href="/tag/bitcoin.html">Bitcoin</a>,    <a href="/tag/alogrithm.html">Alogrithm</a>  </section>
+<p><strong>解：</strong>交易b的『输入脚本』，这么一长串只是两个元素，『签名』和『公钥』（sig &amp; pubkey）</p>
+<div class="highlight"><pre>3046022100ba1427639c9f67f2ca1088d0140318a98cb1e84f604dc90ae00ed7a5f9c61cab02210094233d018f2f014a5864c9e0795f13735780cafd51b950f503534a6af246aca301
+03a63ab88e75116b313c6de384496328df2656156b8ac48c75505cd20a4890f5ab
+</pre></div>
 
 
-    <section>
-        <h1>Social</h1>
-        <ul>
-            <li><a href="#" target="_blank">You can add links in your config file</a></li>
-            <li><a href="#" target="_blank">Another social link</a></li>
-        </ul>
-    </section>
-    <section>
-        <h1>Blogroll</h1>
-        <ul>
-            <li><a href="http://getpelican.com/" target="_blank">Pelican</a></li>
-            <li><a href="http://python.org/" target="_blank">Python.org</a></li>
-            <li><a href="http://jinja.pocoo.org/" target="_blank">Jinja2</a></li>
-            <li><a href="#" target="_blank">You can modify those links in your config file</a></li>
-        </ul>
-    </section>
+<p>下面来看下这两段脚本是如何执行，来完成『解题』过程的。</p>
+<ol>
+<li>首先执行的是『输入脚本』。因为脚本是从左向右执行的，那么先入栈的是『签名』，随后是『公钥』
+<img src="/images/understand-bitcoin-script/07.png" width="100%"></li>
+<li>接着，执行的是『输出脚本』。从左向右执行，第一个指令是OP_DUP——复制栈顶元素
+<img src="/images/understand-bitcoin-script/08.png" width="100%"></li>
+<li>OP_HASH160——计算栈顶元素Hash，得到pubkeyhash
+<img src="/images/understand-bitcoin-script/09.png" width="100%"></li>
+<li>将『输出脚本』中的『公钥哈希』入栈，为了和前面计算得到的哈希区别，称它为pubkeyhash'
+<img src="/images/understand-bitcoin-script/10.png" width="100%"></li>
+<li>OP_EQUALVERIFY——检查栈顶前两元素是否相等，如果相等继续执行，否则中断执行，返回失败
+<img src="/images/understand-bitcoin-script/11.png" width="100%"></li>
+<li>OP_CHECKSIG——使用栈顶前两元素执行签名校验操作，如果相等，返回成功，否则返回失败
+<img src="/images/understand-bitcoin-script/12.png" width="100%"></li>
+</ol>
+<p>这样一串指令执行下来，就可以验证这道数学题是否做对了，也就是说验明了想要花费『钱包地址』中比特币的人是否拥有对应的『私钥』。上面的执行过程是可以在<a href="http://webbtc.com/script">脚本模拟器</a>中执行的，能够看到每一步执行的状态，感兴趣的童鞋可以尝试一下。</p>
+<p>其实除了标准的P2PKH交易脚本，还有P2SH的Multi-Sig脚本以及真正的『解谜交易』脚本，我们可以在今后接着讨论。</p>
+<hr />
+<h2>参考</h2>
+<p>[1] 申屠青春(<a href="http://weibo.com/MyBitcoin">我看比特币</a>), <a href="http://www.8btc.com/bitcoin_scripts">【比特币脚本】</a></p>
+<p>[2] Bitcoin Wiki, <a href="https://en.bitcoin.it/wiki/Script">【Script】</a></p> 
+                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
 
-</aside>    </div>
-  </div>
-  <footer role="contentinfo"><p>
-    Copyright &copy;  2014&ndash;2015  Hyper Wang &mdash;
-  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
-</p></footer>
-  <script src="/theme/js/modernizr-2.0.js"></script>
-  <script src="/theme/js/ender.js"></script>
-  <script src="/theme/js/octopress.js" type="text/javascript"></script>
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/bitcoin-key-relationship.html" rel="bookmark"
+                           title="Permalink to 比特币私钥,公钥,钱包地址间的关系">比特币私钥,公钥,钱包地址间的关系</a></h1>
+                </header>
+
+                <div class="entry-content">
+                <p>A brief introduction to bitcoin private key, public key and address.</p>
+                <a class="readmore" href="/bitcoin-key-relationship.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+                </ol><!-- /#posts-list -->
+                </section><!-- /#content -->
+        <section id="extras" class="body">
+        </section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+
 </body>
 </html>

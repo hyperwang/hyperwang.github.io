@@ -1,127 +1,116 @@
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html lang="zh">
 <head>
-  <meta charset="utf-8">
-  <title>Category: Alogrithm &mdash; Hyper's Blog</title>
-  <meta name="author" content="Hyper Wang">
+        <meta charset="utf-8" />
+        <title>Hyper's Blog - Alogrithm</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
 
-
-
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-    <link href="/favicon.png" rel="icon">
-
-  <link href="/theme/css/main.css" media="screen, projection"
-        rel="stylesheet" type="text/css">
-
-  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic"
-        rel="stylesheet" type="text/css">
-  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic"
-        rel="stylesheet" type="text/css">
+        <!--[if IE]>
+            <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
 </head>
 
-<body>
-  <header role="banner"><hgroup>
-  <h1><a href="/">Hyper's Blog</a></h1>
-</hgroup></header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-</ul>
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Hyper's Blog </a></h1>
+                <nav><ul>
+                    <li class="active"><a href="/category/alogrithm.html">Alogrithm</a></li>
+                    <li><a href="/category/bitcoin.html">Bitcoin</a></li>
+                    <li><a href="/category/technology.html">Technology</a></li>
+                </ul></nav>
+        </header>
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="/leetcode-unique-paths.html">LeetCode OJ: Unique Paths</a></h1>
+                    <h2>原题</h2>
+<blockquote>
+<p><strong>Unique Paths</strong></p>
+<p>A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).</p>
+<p>The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).</p>
+<p>How many possible unique paths are there?</p>
+<p><img src="/images/leetcode-unique-paths/01.png" width="100%"></p>
+<p>Above is a 3 x 7 grid. How many possible unique paths are there?</p>
+<p>Note: m and n will be at most 100.</p>
+</blockquote>
+<hr />
+<h2>分析</h2>
+<p>这是leetcode.com上一道难度为Hard的题目，题目中提到的机器人要从网格的左上角移动到右下角，每一步只能向下或者向右，那么我们来考虑到达右下角终点时的情形，这时机器人要么是从终点方格左侧移动过来，要么是从方格上方移动过来，如下图：
+<img src="/images/leetcode-unique-paths/05.png" width="100%"></p>
+<p>要算出3行7列网格从起点到终点有多少条路径的问题，可以分解为：</p>
+<ol>
+<li>算出2行7列网格从左上角到右下角，有多少条路径</li>
+<li>算出3行6列网格从左上角到右下角，有多少条路径</li>
+<li>将上述两个路径数求和，得到问题的解.</li>
+</ol>
+<p><img src="/images/leetcode-unique-paths/02.png" width="100%"></p>
+<p>这样看来，这道题目可以是使用递归方法来求解，设P(m,n)为m行n列网格的路径数，那么:</p>
+<p>m为1或者n为1时，网格是一个单行或单列，从起点到终点只有一条路径，所以P(m,n)为1。</p>
+<p>其他情况下，P(m,n)分解为如下递归公式：</p>
+<div class="highlight"><pre>P(m,n) = P(m-1,n) + P(m,n-1)
+</pre></div>
 
 
-<ul class="main-navigation">
-      <li class="active">
-        <a href="/category/alogrithm.html">Alogrithm</a>
-      </li>
-      <li >
-        <a href="/category/bitcoin.html">Bitcoin</a>
-      </li>
-      <li >
-        <a href="/category/technology.html">Technology</a>
-      </li>
-</ul></nav>
-  <div id="main">
-    <div id="content">
-<div>
-	<article role="article">
-    	<header>
-    		<h1 class="entry-title">Category: Alogrithm</h1>
-    	</header>
-
-    	<div id="blog-archives">
-            <h2>2015</h2>
-                    <article>
-                        <h1><a href="/leetcode-unique-paths.html">LeetCode OJ: Unique Paths</a></h1>
-                        <time datetime="2015-04-22 07:49:00+08:00" pubdate>
-                            <span class="month">四月</span>
-                            <span class="day">22</span>
-                            <span class="year">2015</span>
-                        </time>
-                        <footer>
-                            <span class="categories">posted in
-                                <a class='category' href='/category/alogrithm.html'>Alogrithm</a>
-                            </span>
-                        </footer>
-                    </article>
-	    </div>
-    </article>
-</div>
-<aside class="sidebar">
-  <section>
-    <h1>Recent Posts</h1>
-    <ul id="recent_posts">
-      <li class="post">
-          <a href="/leetcode-unique-paths.html">LeetCode OJ: Unique Paths</a>
-      </li>
-    </ul>
-  </section>
-  <section>
-      
-    <h1>Categories</h1>
-    <ul id="recent_posts">
-        <li><a href="/category/alogrithm.html">Alogrithm</a></li>
-        <li><a href="/category/bitcoin.html">Bitcoin</a></li>
-        <li><a href="/category/technology.html">Technology</a></li>
-    </ul>
-  </section>
- 
-
-  <section>
-  <h1>Tags</h1>
-    <a href="/tag/technology.html">Technology</a>,    <a href="/tag/bitcoin.html">Bitcoin</a>,    <a href="/tag/alogrithm.html">Alogrithm</a>  </section>
+<hr />
+<h2>递归方式求解</h2>
+<p>根据上面给出的公式，可以很直观地使用递归方式求解，python代码如下：</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="c"># @param m, an integer</span>
+    <span class="c"># @param n, an integer</span>
+    <span class="c"># @return an integer</span>
+    <span class="k">def</span> <span class="nf">uniquePaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">uniquePaths</span><span class="p">(</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">uniquePaths</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
 
 
-    <section>
-        <h1>Social</h1>
-        <ul>
-            <li><a href="#" target="_blank">You can add links in your config file</a></li>
-            <li><a href="#" target="_blank">Another social link</a></li>
-        </ul>
-    </section>
-    <section>
-        <h1>Blogroll</h1>
-        <ul>
-            <li><a href="http://getpelican.com/" target="_blank">Pelican</a></li>
-            <li><a href="http://python.org/" target="_blank">Python.org</a></li>
-            <li><a href="http://jinja.pocoo.org/" target="_blank">Jinja2</a></li>
-            <li><a href="#" target="_blank">You can modify those links in your config file</a></li>
-        </ul>
-    </section>
+<p>提交代码，运行结果显示超时：
+<img src="/images/leetcode-unique-paths/04.png" width="100%"></p>
+<p>以题目为例，m=3 n=7，进行一次递归：</p>
+<div class="highlight"><pre>P(3,7) = P(2,7) + P(3,6)
+</pre></div>
 
-</aside>    </div>
-  </div>
-  <footer role="contentinfo"><p>
-    Copyright &copy;  2015  Hyper Wang &mdash;
-  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
-</p></footer>
-  <script src="/theme/js/modernizr-2.0.js"></script>
-  <script src="/theme/js/ender.js"></script>
-  <script src="/theme/js/octopress.js" type="text/javascript"></script>
+
+<p>再进行一次递归：</p>
+<div class="highlight"><pre>P(3,7) = P(1,6) + P(2,6) + P(2,6) + P(3,5)
+</pre></div>
+
+
+<p>可以看到P(2,6)被计算了两次，在递归过程中会有多次这样的重复计算，所以导致了指数级的时间复杂度，造成超时。</p>
+<hr />
+<h2>迭代方式求解</h2>
+<p>递归方式造成程序超时，那么可以改用迭代方式求解，python代码如下：</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="c"># @param m, an integer</span>
+    <span class="c"># @param n, an integer</span>
+    <span class="c"># @return an integer</span>
+    <span class="k">def</span> <span class="nf">uniquePaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">mem</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">mem</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mem</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">mem</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">mem</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">mem</span><span class="p">[</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+
+<p>使用一个标记数组保存从左到右、从上至下迭代求得的路径数，最后一个计算出的标记数组元素就是我们要求的m行n列网格的路径数，时间复杂度为O(mn)，提交代码解题成功。</p>
+<hr />
+<h2>总结</h2>
+<p>这是一道比较简单的动态规划题目，因为没有优化函数的约束，所以在计算完标记函数的值后，就成功完成了解题。此外还有这道题目还有一个扩展题目 Unique Path II ，比这道题多了一个需要动脑的地方。</p> 
+                </article>
+            </aside><!-- /#featured -->
+        <section id="extras" class="body">
+        </section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+
 </body>
 </html>
